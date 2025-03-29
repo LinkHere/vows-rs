@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASM Auth</title>
+    <script type="module">
+        import init, { signup, login } from "./pkg/wasm_auth.js";
+
+        async function handleSignup() {
+            const inviteCode = document.getElementById("invite_code").value;
+            const username = document.getElementById("signup_username").value;
+            const password = document.getElementById("signup_password").value;
+
+            try {
+                let response = await signup(inviteCode, username, password);
+                console.log("Signup response:", response);
+                alert("Signup Successful!");
+            } catch (error) {
+                console.error("Signup failed:", error);
+            }
+        }
+
+        async function handleLogin() {
+            const username = document.getElementById("login_username").value;
+            const password = document.getElementById("login_password").value;
+
+            try {
+                let response = await login(username, password);
+                console.log("Login response:", response);
+                alert("Login Successful!");
+            } catch (error) {
+                console.error("Login failed:", error);
+            }
+        }
+
+        init().then(() => {
+            document.getElementById("signup_btn").addEventListener("click", handleSignup);
+            document.getElementById("login_btn").addEventListener("click", handleLogin);
+        });
+    </script>
+</head>
+<body>
+    <h2>Signup</h2>
+    <input type="text" id="invite_code" placeholder="Invite Code" required>
+    <input type="text" id="signup_username" placeholder="Username" required>
+    <input type="password" id="signup_password" placeholder="Password" required>
+    <button id="signup_btn">Sign Up</button>
+
+    <h2>Login</h2>
+    <input type="text" id="login_username" placeholder="Username" required>
+    <input type="password" id="login_password" placeholder="Password" required>
+    <button id="login_btn">Login</button>
+</body>
+</html>
