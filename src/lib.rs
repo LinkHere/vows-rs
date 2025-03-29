@@ -28,7 +28,6 @@ struct ApiResponse {
     message: String,
 }
 
-// ✅ Signup: Validate KV Invite Code & Store User in D1
 async fn handle_signup(mut req: Request, env: Env) -> Result<Response> {
     //let body: SignupRequest = req.json().await.map_err(|_| Response::error("Invalid request", 400))?;
     let body: SignupRequest = req.json()
@@ -36,25 +35,16 @@ async fn handle_signup(mut req: Request, env: Env) -> Result<Response> {
     .map_err(|_| worker::Error::RustError("Invalid request body".to_string()))?;
     let kv = env.kv("INVITE_CODES")?;
     
-    // ✅ Check if invite code exists & is "valid"
     let invite_value = kv.get(&body.invite_code).text().await?;
     if invite_value.as_deref() != Some("valid") {
         return Response::error("Invalid invite code", 403);
     }
 
-    // ✅ Remove invite code (one-time use)
     kv.delete(&body.invite_code).await?;
 
-    // ✅ Store user in D1 database
     let db = env.d1("DB")?;
     let query = "INSERT INTO users (username, password) VALUES (?, ?)";
-//    db.prepare(query)
-//        .bind(&[body.username.into(), body.password.into()])
-//        .run()
-//        .await
-//        .map_err(|_| Response::error("Database error", 500))?;
     let statement = db.prepare(query);
-    //.map_err(|e| worker::Error::RustError(e.to_string()))?;
     statement
     .bind(&[body.username.into(), body.password.into()])?
     .run()
@@ -67,7 +57,6 @@ async fn handle_signup(mut req: Request, env: Env) -> Result<Response> {
     Response::from_json(&response)
 }
 
-// ✅ Login: Check User in D1
 async fn handle_login(mut req: Request, env: Env) -> Result<Response> {
     //let body: LoginRequest = req.json().await.map_err(|_| Response::error("Invalid request", 400))?;
     let body: LoginRequest = req.json()
