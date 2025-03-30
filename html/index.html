@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login with Invite Code</h1>
+    <input type="text" id="inviteCode" placeholder="Enter Invite Code">
+    <button onclick="login()">Login</button>
+    <p id="message"></p>
+
+    <script>
+        const API_URL = "https://your-cloudflare-worker-url.com"; // Replace with your actual worker URL
+
+        async function login() {
+            const inviteCode = document.getElementById("inviteCode").value;
+            if (!inviteCode) {
+                document.getElementById("message").textContent = "Please enter an invite code.";
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ invite_code: inviteCode }),
+            });
+
+            if (response.ok) {
+                const token = await response.text(); // JWT Token
+                localStorage.setItem("token", token);
+                window.location.href = "profile.html"; // Redirect to profile page
+            } else {
+                document.getElementById("message").textContent = "Invalid invite code.";
+            }
+        }
+    </script>
+</body>
+</html>
