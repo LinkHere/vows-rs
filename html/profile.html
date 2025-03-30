@@ -20,7 +20,7 @@
     	    const name = document.getElementById("name").value;
             const token = localStorage.getItem("token");
 
-    	    const response = await fetch("https://your-cloudflare-worker-url.com/update-profile", {
+    	    const response = await fetch("https://vows-rs.clydecreta.workers.dev/update-profile", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
