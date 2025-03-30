@@ -14,27 +14,22 @@
     <script>
         const API_URL = "https://vows-rs.clydecreta.workers.dev";
 
-        async function login() {
-            const inviteCode = document.getElementById("inviteCode").value;
-            if (!inviteCode) {
-                document.getElementById("message").textContent = "Please enter an invite code.";
-                return;
-            }
-
-            const response = await fetch(`${API_URL}/login`, {
+	async function login() {
+    	    const inviteCode = document.getElementById("inviteCode").value;
+    	    const response = await fetch(`${API_URL}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ invite_code: inviteCode }),
-            });
+    	    });
 
-            if (response.ok) {
-                const token = await response.text(); // JWT Token
+    	    if (response.ok) {
+                const token = await response.text();
                 localStorage.setItem("token", token);
-                window.location.href = "profile.html"; // Redirect to profile page
+                window.location.href = "profile.html";
             } else {
                 document.getElementById("message").textContent = "Invalid invite code.";
             }
-        }
+	}
     </script>
 </body>
 </html>
