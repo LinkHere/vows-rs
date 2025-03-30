@@ -1,6 +1,0 @@
-name = "vows-rs"
-main = "build/worker/shim.mjs"
-compatibility_date = "2025-03-29"
-
-[build]
-command = "cargo install worker-build && worker-build --release"
