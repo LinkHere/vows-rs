@@ -8,10 +8,33 @@
 <body>
     <h1>Welcome to Your Profile</h1>
     <p id="profileData"></p>
+    <input type="text" id="name" placeholder="Enter your name (optional)">
+    <button onclick="updateProfile()">Save Name</button>
+    <p id="status"></p>
     <button onclick="logout()">Logout</button>
 
     <script>
         const API_URL = "https://vows-rs.clydecreta.workers.dev";
+	
+	async function updateProfile() {
+    	    const name = document.getElementById("name").value;
+            const token = localStorage.getItem("token");
+
+    	    const response = await fetch("https://your-cloudflare-worker-url.com/update-profile", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token,
+                },
+                body: JSON.stringify({ name }),
+            });
+
+            if (response.ok) {
+                document.getElementById("status").textContent = "Profile updated successfully!";
+            } else {
+                document.getElementById("status").textContent = "Error updating profile.";
+            }
+        }
 
         async function fetchProfile() {
             const token = localStorage.getItem("token");
