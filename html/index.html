@@ -1,35 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
 </head>
 <body>
-    <h1>Login with Invite Code</h1>
-    <input type="text" id="inviteCode" placeholder="Enter Invite Code">
-    <button onclick="login()">Login</button>
-    <p id="message"></p>
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="invite-code">Invite Code:</label>
+        <input type="text" id="invite-code" required>
+        <label for="display-name">Display Name (Optional):</label>
+        <input type="text" id="display-name">
+        <button type="submit">Login</button>
+    </form><button id="logout-btn" style="display:none;">Logout</button>
+<script>
+    document.getElementById("login-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const inviteCode = document.getElementById("invite-code").value;
+        const displayName = document.getElementById("display-name").value;
+        
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ invite_code: inviteCode, display_name: displayName }),
+            credentials: "include" // Ensures cookies are sent with the request
+        });
+        
+        if (response.ok) {
+            alert("Login successful!");
+            document.getElementById("login-form").style.display = "none";
+            document.getElementById("logout-btn").style.display = "block";
+        } else {
+            alert("Login failed. Please check your invite code.");
+        }
+    });
 
-    <script>
-        const API_URL = "https://vows-rs.clydecreta.workers.dev";
+    document.getElementById("logout-btn").addEventListener("click", async function() {
+        const response = await fetch("/logout", {
+            method: "POST",
+            credentials: "include" // Ensures cookies are included
+        });
+        
+        if (response.ok) {
+            alert("Logged out successfully!");
+            document.getElementById("login-form").style.display = "block";
+            document.getElementById("logout-btn").style.display = "none";
+        } else {
+            alert("Logout failed.");
+        }
+    });
+</script>
 
-	async function login() {
-    	    const inviteCode = document.getElementById("inviteCode").value;
-    	    const response = await fetch(`${API_URL}/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ invite_code: inviteCode }),
-    	    });
-
-    	    if (response.ok) {
-                const token = await response.text();
-                localStorage.setItem("token", token);
-                window.location.href = "profile.html";
-            } else {
-                document.getElementById("message").textContent = "Invalid invite code.";
-            }
-	}
-    </script>
 </body>
 </html>
